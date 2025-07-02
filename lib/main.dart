@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_db/auth/auth_gate.dart';
-import 'package:flutter_db/pages/signup_page.dart';
+// import 'package:flutter_db/pages/signup_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -25,6 +25,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO replace HomePage() with AuthGate()
-    return MaterialApp(debugShowCheckedModeBanner: false, home: SignupPage());
+    return MaterialApp(debugShowCheckedModeBanner: false, home: AuthGate());
   }
 }
