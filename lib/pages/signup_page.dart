@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_db/auth/auth_service.dart';
+import 'package:flutter_db/pages/home_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SignupPage extends StatefulWidget {
@@ -21,6 +22,33 @@ class _SignupPageState extends State<SignupPage> {
     setState(() {
       _obscure = !_obscure;
     });
+  }
+
+  void signUp() async {
+    final email = _emailController.text;
+    final password = _passwordController.text;
+    final confirmPswd = _confirmPassword.text;
+
+    if (password != confirmPswd) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: SnackBar(content: Text("Password doesn't match"))),
+      );
+      return;
+    }
+    try {
+      await authService.signUpWithEmailandPassword(email, password);
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Error $e")));
+      }
+    }
   }
 
   @override
@@ -155,6 +183,22 @@ class _SignupPageState extends State<SignupPage> {
                 hintText: "Confirm Password",
                 labelText: "Confirm",
               ),
+            ),
+          ),
+
+          // Signup Button
+          SizedBox(height: 6),
+          SizedBox(
+            width: 250,
+            height: 50,
+            child: ElevatedButton(
+              onPressed: signUp,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color.fromRGBO(255, 144, 94, 1),
+                side: BorderSide.none,
+                shape: StadiumBorder(),
+              ),
+              child: Text("Signup", style: TextStyle(color: Colors.white)),
             ),
           ),
         ],
