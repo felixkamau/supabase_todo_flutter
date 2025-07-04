@@ -18,7 +18,7 @@ class AuthService {
     String email,
     String password,
   ) async {
-    return await _supabaseClient.auth.signUp(email: email, password: email);
+    return await _supabaseClient.auth.signUp(email: email, password: password);
   }
 
   // Signin with email and pswd
@@ -33,7 +33,7 @@ class AuthService {
   }
 
   // Log out
-  Future<void> logOut() async {
+  Future<void> logOut() async { 
     await _supabaseClient.auth.signOut();
   }
 
