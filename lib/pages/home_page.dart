@@ -17,6 +17,8 @@ class _HomePageState extends State<HomePage> {
     authService.logOut();
   }
 
+  // Function to fetchTasks from our db using
+  // FutureBuilder() widget
   Future<List<Map<String, dynamic>>> fetchTasks() async {
     final user = supabaseClient.auth.currentUser;
     if (user == null) throw Exception("User not logged in");
@@ -30,6 +32,8 @@ class _HomePageState extends State<HomePage> {
     return response;
   }
 
+  // A re-write of fetchTasks() function to fetch all tasks from supabase
+  // using StreamBuilder() widget
   Stream<List<Map<String, dynamic>>> supabseStream() {
     final user = supabaseClient.auth.currentUser;
     if (user == null) throw Exception("User not logged in");
@@ -40,6 +44,7 @@ class _HomePageState extends State<HomePage> {
         .eq('user_id', user.id)
         .order('created_at');
 
+    print(response); // for debug in production
     return response;
   }
 
@@ -93,15 +98,24 @@ class _HomePageState extends State<HomePage> {
                   ),
                   subtitle: Text(formattedDate),
                   value: isDone,
+                  // BuildContext across async lint erroe
                   onChanged: (bool? value) async {
+                    final messenger = ScaffoldMessenger.of(context);
                     await supabaseClient
                         .from('tasks')
                         .update({'status': value})
                         .eq('id', task['id']);
 
-                    // setState(() {}); // rebuild do away with this and use stream
+                    // Fix: BuildContext error across async gaps
+                    // Checks if the context is still available in the widget tree
+                    // if mounted == false that means the widget is no longer
+                    // available in the widget tree, thus the context used here will not
+                    // be valid
+                    if (!mounted) return;
 
-                    ScaffoldMessenger.of(context).showSnackBar(
+                    // Now it's safe to use context
+                    // setState(() {}); // rebuild do away with this and use stream
+                    messenger.showSnackBar(
                       SnackBar(
                         content: Text("Updated task"),
                         duration: Duration(seconds: 1),
@@ -116,6 +130,10 @@ class _HomePageState extends State<HomePage> {
       ),
 
       // Use future builder
+
+      // ==> Prefered StreamBuilder() widget for real-time updates instead
+      // of FutureBuilder() which keeps re-building the widgets.
+
       // body: FutureBuilder(
       //   future: fetchTasks(),
       //   builder: (context, snapshot) {
