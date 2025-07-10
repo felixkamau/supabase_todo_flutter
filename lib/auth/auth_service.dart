@@ -2,7 +2,7 @@
 - Here we create a AuthService class
 - Which will have the methods:
   => getEmail and userName
-  => logOut()
+  => logOut()w
   => signUp and signIn
 */
 
